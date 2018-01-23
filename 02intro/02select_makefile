@@ -1,0 +1,27 @@
+# Modified by Hunter Damron - 2018
+
+# compiler variable
+CC = g++
+
+# compiler flags variable for C++ 11 standard
+FLAGS = -std=c++11
+# add the "all warnings" flag to variable
+FLAGS += -Wall
+
+# make an executable name variable
+EXE = app
+
+# default rule, use EXE
+#	Dependencies: 02select.cc
+#   Compiler: CC
+#   Language version: FLAGS
+#   Output file name: EXE
+$(EXE): 02select.cc
+	$(CC) $(FLAGS) -o $(EXE) 02select.cc
+
+# clean rule
+#   Dependencies: none
+#   Command: rm
+#   File(s): EXE
+clean:
+	rm $(EXE)

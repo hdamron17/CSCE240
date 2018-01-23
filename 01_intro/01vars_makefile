@@ -1,0 +1,20 @@
+# Modified by Hunter Damron - 2018
+
+# To make 01vars app use
+# - "make -f 01vars_makefile" or
+# - "make -f 01vars_makefile app"
+# both sans quotes.
+
+# Make a compiler variable
+CC="g++"
+
+# Make a compiler flags variable for C++ 11 standard
+FLAGS="-std=c++11"
+
+# Make rule for 01vars app
+#	Dependencies: 01vars.cc
+#   Compiler: use compiler variable
+#   Language version: use flags variable
+#   Object file name: app
+app: 01vars.cc
+	$(CC) $(FLAGS) -o app 01vars.cc

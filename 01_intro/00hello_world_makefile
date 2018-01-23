@@ -1,0 +1,14 @@
+# Modified by Hunter Damron - 2018
+
+# Use to make 00hello_world app. Use
+# - "make -f 00hello_world_makefile" or
+# - "make -f 00hello_world_makefile app"
+# both sans quotes.
+
+# Make rule for 00hello_world app
+#	Dependencies: hello_world.cc
+#   Compiler: g++
+#   Language version: C++ 11
+#   Object file name: app
+app: 00hello_world.cc
+	g++ -std=c++11 -o app 00hello_world.cc

@@ -1,0 +1,35 @@
+# Modified by Hunter Damron - 2018
+
+# Make a compiler variable
+CC = g++
+
+# Make a compiler flags variable for C++ 11 standard
+FLAGS = -std=c++11
+# Add the "all warnings" flag to variable
+FLAGS += -Wall
+
+# Make an executable name variable
+EXE = app
+
+# default rule, use EXE
+#	Dependencies: 03loops.o
+#   Compiler: CC
+#   Language version: FLAGS
+#   Output file name: EXE
+$(EXE): 03loops.o
+	$(CC) $(FLAGS) -o $(EXE) 03loops.o
+
+# 03loops.o rule (does not link)
+#   Dependencies: 03loops.cc
+#   Compiler: CC
+#   Language version: FLAGS
+#   Input file name: 03loops.cc
+03loops.o: 03loops.cc
+	$(CC) $(FLAGS) -o 03loops.o -c 03loops.cc
+
+# clean rule
+#   Dependencies: none
+#   Command: @rm (to make rm silent)
+#   Files: EXE, 03loops.o
+clean:
+	@rm $(EXE) 03loops.o
