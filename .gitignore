@@ -31,3 +31,6 @@
 *.out
 *.app
 app
+
+# Custom
+.DS_Store

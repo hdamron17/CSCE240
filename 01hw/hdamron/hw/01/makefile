@@ -27,4 +27,4 @@ compress:
 	zip $(UNAME) main.cc makefile
 
 clean:
-	@rm -f $(EXE) main.o $(UNAME).zip
+	@rm -f $(EXE) *.o $(UNAME).zip

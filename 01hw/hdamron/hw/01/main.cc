@@ -14,7 +14,7 @@ using std::cout;
 using std::endl;
 
 int main(int argc, char** argv) {
-    int num;
+    int num = 0;
     cin >> num;
 
     bool negative = num < 0;
