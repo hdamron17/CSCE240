@@ -10,36 +10,6 @@ void Prompt() {
   cout << " >>> ";
 }
 
-// Move to dollar.cc and update to method
-/* ToDollar */
-const Dollar ToDollar(double val) {
-  // extract dollars portion of val and reduce by that amount
-  int dollars = static_cast<int>(val);
-  val -= dollars;
-
-  // shift value two places left and store as cents
-  double cents = 100.0*val;
-
-  // create and return Dollar struct instance
-  return Dollar(dollars, cents);
-}
-
-// Move to dollar.cc and update to method
-/* ToString */
-const string ToString(const Dollar& val) {
-  // add dollars value to string
-  StrStr sStr;
-  sStr << "$" << val.dollars << '.';
-
-  // shift cents two places left, round, and shift back two place right
-  int cents = static_cast<int>(round(val.cents*100.0)/100.0);
-  if (10.0 > cents)
-    sStr << "0";
-  sStr << cents;
-  //   and return
-  return sStr.str();
-}
-
 // Update to use Dollar class
 /* GetDollarInput */
 const Dollar GetDollarInput(const string& align) {
@@ -49,30 +19,7 @@ const Dollar GetDollarInput(const string& align) {
   cin >> value;
   assert(0.0 <= value);
 
-  // cast value to int to get dollars and remove dollars from value
-  int dollars = static_cast<int>(value);
-  value -= dollars;
-
-  // calc cents by shifting two places left
-  double cents = value *= 100.0;
-
-  return Dollar(dollars, cents); 
-}
-
-// Move to dollar.cc and update to method
-/* Add */
-const Dollar Add(const Dollar& lhs, const Dollar& rhs) {
-  // create Dollar instance with sum of dollars
-  Dollar sum(lhs.dollars + rhs.dollars);
-  // sum cents and when greater than 99, add 1 to dollars and reduce by 100
-  sum.cents = lhs.cents + rhs.cents;
-  if (100.0 <= sum.cents) {
-    ++sum.dollars;
-
-    sum.cents -= 100.0;
-  }
-
-  return sum;
+  return Dollar::ToDollar(value);
 }
 
 // Update to use Dollar class
@@ -103,15 +50,15 @@ int main(int argc, char* argv[]) {
     switch (input) {
     case 1:
       first = GetDollarInput(" ");
-      cout << " first: " << ToString(first) << endl;
+      cout << " first: " << first.ToString() << endl;
       break;
     case 2:
       second = GetDollarInput(" ");
-      cout << " second: " << ToString(second) << endl;
+      cout << " second: " << second.ToString() << endl;
       break;
     case 3:
-      cout << ToString(first) << " + " << ToString(second) << " = " <<
-          ToString(Add(first, second)) << endl;
+      cout << first.ToString() << " + " << second.ToString() << " = " <<
+          first.Add(second).ToString() << endl;
       break;
     case 4:
       break;
