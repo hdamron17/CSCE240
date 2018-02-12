@@ -1,25 +1,34 @@
 /**
  * complex.h
- * 
+ *
  * Created by Hunter Damron
  *     Copyright 2018
  */
 
-#ifndef COMPLEX_H
+#ifndef COMPLEX_H  // NOLINT(build/header_guard)
 #define COMPLEX_H
 
 #include <cmath>
 // using fabs
+// using abs
 // using round
 
 #include <string>
 using std::string;
+using std::stof;
+
+#include <iostream>
+using std::istream;
+using std::ostream;
+
+#include <sstream>
+using std::stringstream;
 
 class complex {
-public:
-    complex() : real_(0.0), imag_(0.0) {};
-    complex(double imag) : real_(0.0), imag_(imag) {};
-    complex(double real, double imag) : real_(real), imag_(imag) {};
+ public:
+    complex() : real_(0.0), imag_(0.0) {}
+    explicit complex(double imag) : real_(0.0), imag_(imag) {}
+    complex(double real, double imag) : real_(real), imag_(imag) {}
 
     double real() const;
     void real(double real_val);
@@ -47,14 +56,14 @@ public:
     friend const complex operator*(const double lhs, const complex& rhs);
     friend const complex operator*(const int lhs, const complex& rhs);
 
-    const bool operator==(const complex& rhs) const;
-    const bool operator!=(const complex& rhs) const;
-
     const string ToString() const;
+    static const complex ToComplex(const string val);
 
-private:
+    friend ostream& operator<<(ostream& lhs, const complex rhs);
+    friend istream& operator>>(istream& lhs, complex& rhs);
+
+ private:
     double real_, imag_;
-    const double epsilon = 0.00001;
 };
 
-#endif /* COMPLEX_H */
+#endif  // 02HW_COMPLEX_H_
