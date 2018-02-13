@@ -16,6 +16,7 @@ test_$(FILE): test_$(FILE).cc $(FILE).o
 	$(CC) $(FLAGS) -o $@ $^
 
 compress:
+	rm -f $(USER).zip
 	mkdir -p $(USER)/$(COMP_DIR)
 	cp $(FILE).h $(FILE).cc $(USER)/$(COMP_DIR)
 	zip -r $(USER).zip $(USER)

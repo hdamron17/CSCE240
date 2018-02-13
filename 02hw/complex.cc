@@ -7,89 +7,89 @@
 
 #include "complex.h"  // NOLINT(build/include_subdir)
 
-double complex::real() const {
+double Complex::real() const {
     return this->real_;
 }
 
-void complex::real(double real_val) {
+void Complex::real(double real_val) {
     this->real_ = real_val;
 }
 
-double complex::imag() const {
+double Complex::imag() const {
     return this->imag_;
 }
 
-void complex::imag(double imag_val) {
+void Complex::imag(double imag_val) {
     this->imag_ = imag_val;
 }
 
-const complex complex::Add(const complex& rhs) const {
-    return complex(this->real_ + rhs.real_, this->imag_ + rhs.imag_);
+const Complex Complex::Add(const Complex& rhs) const {
+    return Complex(this->real_ + rhs.real_, this->imag_ + rhs.imag_);
 }
 
-const complex complex::Add(const double rhs) const {
-    return complex(this->real_ + rhs, this->imag_);
+const Complex Complex::Add(const double rhs) const {
+    return Complex(this->real_ + rhs, this->imag_);
 }
 
-const complex complex::Add(const int rhs) const {
-    return complex(this->real_ + rhs, this->imag_);
+const Complex Complex::Add(const int rhs) const {
+    return Complex(this->real_ + rhs, this->imag_);
 }
 
-const complex complex::operator+(const complex& rhs) const {
+const Complex Complex::operator+(const Complex& rhs) const {
     return this->Add(rhs);
 }
 
-const complex complex::operator+(const double rhs) const {
+const Complex Complex::operator+(const double rhs) const {
     return this->Add(rhs);
 }
 
-const complex complex::operator+(const int rhs) const {
+const Complex Complex::operator+(const int rhs) const {
     return this->Add(rhs);
 }
 
-const complex operator+(const double lhs, const complex& rhs) {
+const Complex operator+(const double lhs, const Complex& rhs) {
     return rhs.Add(lhs);
 }
 
-const complex operator+(const int lhs, const complex& rhs) {
+const Complex operator+(const int lhs, const Complex& rhs) {
     return rhs.Add(lhs);
 }
 
-const complex complex::Mul(const complex& rhs) const {
+const Complex Complex::Mul(const Complex& rhs) const {
     // (a+bi) * (c+di) = (ac-bd) + (ad+bc)i
-    return complex(this->real_ * rhs.real_ - this->imag_ * rhs.imag_,
+    return Complex(this->real_ * rhs.real_ - this->imag_ * rhs.imag_,
                    this->real_ * rhs.imag_ + this->imag_ * rhs.real_);
 }
 
-const complex complex::Mul(const double rhs) const {
-    return complex(this->real_ * rhs, this->imag_ * rhs);
+const Complex Complex::Mul(const double rhs) const {
+    return Complex(this->real_ * rhs, this->imag_ * rhs);
 }
 
-const complex complex::Mul(const int rhs) const {
-    return complex(this->real_ * rhs, this->imag_ * rhs);
+const Complex Complex::Mul(const int rhs) const {
+    return Complex(this->real_ * rhs, this->imag_ * rhs);
 }
 
-const complex complex::operator*(const complex& rhs) const {
+const Complex Complex::operator*(const Complex& rhs) const {
     return this->Mul(rhs);
 }
 
-const complex complex::operator*(const double rhs) const {
+const Complex Complex::operator*(const double rhs) const {
     return this->Mul(rhs);
 }
 
-const complex complex::operator*(const int rhs) const {
+const Complex Complex::operator*(const int rhs) const {
     return this->Mul(rhs);
 }
 
-const complex operator*(const double lhs, const complex& rhs) {
+const Complex operator*(const double lhs, const Complex& rhs) {
     return rhs.Mul(lhs);
 }
 
-const complex operator*(const int lhs, const complex& rhs) {
+const Complex operator*(const int lhs, const Complex& rhs) {
     return rhs.Mul(lhs);
 }
 
-const string complex::ToString() const {
+const string Complex::ToString() const {
     stringstream ret;
 
     bool has_real = this->real_ != 0.0;
@@ -98,27 +98,27 @@ const string complex::ToString() const {
     ret << "(";
 
     if (has_real) {
-        ret << this->real_;
+        ret << this->real_;  // Adds real_ is it is nonzero
     }
     if (has_imag) {
         if (has_real) {
             if (this->imag_ > 0)
-                ret << " + ";
+                ret << " + ";  // If real_ nonzero and imag_ positive, addition
             if (this->imag_ < 0)
-                ret << " - ";
+                ret << " - ";  // If real_ nonzero and imag_ negative, addition
         } else {
             if (this->imag_ < 0)
-                ret << "-";
+                ret << "-";  // No spaces around minus if there is no real part
         }
 
         if (abs(this->imag_) != 1) {
-            ret << abs(this->imag_);
+            ret << abs(this->imag_);  // If imag_ is not 1, add abs(imag_)
         }
 
-        ret << "i";
+        ret << "i";  // Append i so we know it's the imaginary part
     }
     if (!has_real && !has_imag) {
-        ret << "0";
+        ret << "0";  // If both real_ and imag_ are zero, the number is 0
     }
 
     ret << ")";
@@ -126,9 +126,9 @@ const string complex::ToString() const {
     return ret.str();
 }
 
-const complex complex::ToComplex(const string val) {
+const Complex Complex::ToComplex(const string val) {
     if (val.size() <= 2 || val.front() != '(' || val.back() != ')')
-        return complex();
+        return Complex();  // Invalid if it does not begin and end with ( and )
 
     stringstream in(val);
     stringstream num;
@@ -137,15 +137,14 @@ const complex complex::ToComplex(const string val) {
 
     in.get(tmp);            // Get first parenthesis
     bool has_num = false,   // True when number has begun (for negative sign)
-         has_real = false,  // True when real number has already been parsed
          imag_neg = false,  // True iff imag_ should be negative
-         done = false;
+         done = false;      // True when the conversion is done so loop exits
 
     while (!done) {
         in.get(tmp);
 
         if (in.fail()) {
-            return complex();  // Return 0 complex number if anything fails
+            return Complex();  // Return 0 complex number if anything fails
         }
 
         switch (tmp) {
@@ -153,9 +152,8 @@ const complex complex::ToComplex(const string val) {
             case '+':
                 if (has_num) {
                     // Negative is not first so it is the separator
-                    real = stof(num.str());
-                    num.str("");
-                    has_real = true;
+                    real = stof(num.str());  // Put number into real part
+                    num.str("");  // Clear sstream to start over for imag
                     has_num = false;
                     if (tmp == '-')
                         imag_neg = true;
@@ -165,49 +163,59 @@ const complex complex::ToComplex(const string val) {
                 }
                 break;
             case 'i':
-                imag = (num.str() == "") ? 1 : stof(num.str());  // 1 by default
-                num.str("");
+                // Immediately follows imaginary part and ends number
+                if (num.str() == "")
+                    imag = 1;  // 1 by default if none is specified
+                else
+                    imag = stof(num.str());  // Else convert to a number
                 if (imag_neg)
-                    imag = -imag;
-                done = true;
+                    imag = -imag;  // If we found a negative earlier, apply now
+                done = true;  // Because imaginary is second, number is done
                 break;
             default:
                 if (tmp == ')' || in.eof()) {
-                    real = stof(num.str());
+                    // End ) signals end of number
+                    // We should not run into eof before ) but just in case
+                    real = stof(num.str());  // Parse number into real
                     done = true;
                 } else if (tmp == '.' || (tmp >= '0' && tmp <= '9')) {
+                    // 0-9 and . can be parts of a number, anything else ignored
                     num << tmp;
                     has_num = true;
                 }
         }
     }
 
-    return complex(real, imag);
+    return Complex(real, imag);
 }
 
-ostream& operator<<(ostream& lhs, const complex rhs) {
+ostream& operator<<(ostream& lhs, const Complex rhs) {
     lhs << rhs.ToString();
     return lhs;
 }
 
-istream& operator>>(istream& lhs, complex& rhs) {
+istream& operator>>(istream& lhs, Complex& rhs) {
     stringstream complex_str;
     char tmp = '\0';
 
     while (tmp != '(' && lhs.good()) {
+        // Reads and discards until open ( is found
         lhs.get(tmp);
     }
     complex_str << tmp;
 
     while (tmp != ')' && lhs.good()) {
+        // Until close ) is found, add read characters to sstream for number
         lhs.get(tmp);
         complex_str << tmp;
     }
 
     if (lhs.good()) {
-        rhs = complex::ToComplex(complex_str.str());
+        // If all goes well, we can parse the value via Complex::ToComplex
+        rhs = Complex::ToComplex(complex_str.str());
     } else {
-        rhs = complex();
+        // If anything fails, just give back the empty Complex instance
+        rhs = Complex();
     }
 
     return lhs;
