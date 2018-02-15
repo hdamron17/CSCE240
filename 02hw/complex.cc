@@ -27,11 +27,11 @@ const Complex Complex::Add(const Complex& rhs) const {
     return Complex(this->real_ + rhs.real_, this->imag_ + rhs.imag_);
 }
 
-const Complex Complex::Add(const double rhs) const {
+const Complex Complex::Add(double rhs) const {
     return Complex(this->real_ + rhs, this->imag_);
 }
 
-const Complex Complex::Add(const int rhs) const {
+const Complex Complex::Add(int rhs) const {
     return Complex(this->real_ + rhs, this->imag_);
 }
 
@@ -39,19 +39,19 @@ const Complex Complex::operator+(const Complex& rhs) const {
     return this->Add(rhs);
 }
 
-const Complex Complex::operator+(const double rhs) const {
+const Complex Complex::operator+(double rhs) const {
     return this->Add(rhs);
 }
 
-const Complex Complex::operator+(const int rhs) const {
+const Complex Complex::operator+(int rhs) const {
     return this->Add(rhs);
 }
 
-const Complex operator+(const double lhs, const Complex& rhs) {
+const Complex operator+(double lhs, const Complex& rhs) {
     return rhs.Add(lhs);
 }
 
-const Complex operator+(const int lhs, const Complex& rhs) {
+const Complex operator+(int lhs, const Complex& rhs) {
     return rhs.Add(lhs);
 }
 
@@ -61,11 +61,11 @@ const Complex Complex::Mul(const Complex& rhs) const {
                    this->real_ * rhs.imag_ + this->imag_ * rhs.real_);
 }
 
-const Complex Complex::Mul(const double rhs) const {
+const Complex Complex::Mul(double rhs) const {
     return Complex(this->real_ * rhs, this->imag_ * rhs);
 }
 
-const Complex Complex::Mul(const int rhs) const {
+const Complex Complex::Mul(int rhs) const {
     return Complex(this->real_ * rhs, this->imag_ * rhs);
 }
 
@@ -73,19 +73,19 @@ const Complex Complex::operator*(const Complex& rhs) const {
     return this->Mul(rhs);
 }
 
-const Complex Complex::operator*(const double rhs) const {
+const Complex Complex::operator*(double rhs) const {
     return this->Mul(rhs);
 }
 
-const Complex Complex::operator*(const int rhs) const {
+const Complex Complex::operator*(int rhs) const {
     return this->Mul(rhs);
 }
 
-const Complex operator*(const double lhs, const Complex& rhs) {
+const Complex operator*(double lhs, const Complex& rhs) {
     return rhs.Mul(lhs);
 }
 
-const Complex operator*(const int lhs, const Complex& rhs) {
+const Complex operator*(int lhs, const Complex& rhs) {
     return rhs.Mul(lhs);
 }
 
@@ -126,7 +126,7 @@ const string Complex::ToString() const {
     return ret.str();
 }
 
-const Complex Complex::ToComplex(const string val) {
+const Complex Complex::ToComplex(string& val) {
     if (val.size() <= 2 || val.front() != '(' || val.back() != ')')
         return Complex();  // Invalid if it does not begin and end with ( and )
 
@@ -212,7 +212,8 @@ istream& operator>>(istream& lhs, Complex& rhs) {
 
     if (lhs.good()) {
         // If all goes well, we can parse the value via Complex::ToComplex
-        rhs = Complex::ToComplex(complex_str.str());
+        string rhs_str = complex_str.str();
+        rhs = Complex::ToComplex(rhs_str);
     } else {
         // If anything fails, just give back the empty Complex instance
         rhs = Complex();
