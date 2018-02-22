@@ -46,5 +46,5 @@ CTestTestfile.cmake
 # Custom
 .DS_Store
 *.zip
-!uncompleted/
+!uncompleted/*.zip
 bin/
