@@ -5,11 +5,12 @@
  *     Copyright 2018
  */
 
+#include <cassert>
+// using assert
+
 #include <iostream>
 using std::cout;
 using std::endl;
-
-#include <cassert>
 
 #include <sstream>
 using std::stringstream;
@@ -90,7 +91,7 @@ int main() {
     assert(!so3.str().compare("(-0.11 + 0.12i)"));
 
     Complex a0, a1, a2, a3, a4;
-    stringstream si("(4 - 3i)\n(4 + 3i)\n(2)\n(2 - i)\n(0 - -4i)");
+    stringstream si("(4 - 3i)\n(4 + 3i)\n(2)\n(2 - i)\n(0 - 4i)");
     si >> a0;
     assert(a0 == Complex(4, -3));
     si >> a1;
@@ -100,7 +101,8 @@ int main() {
     si >> a3;
     assert(a3 == Complex(2, -1));
     si >> a4;
-    assert(a4 == Complex(0, 4));
+    assert(a4 == Complex(0, -4));
+    assert(!Complex::IsComplex(si));
 
     /// Revised for HW 2.5
     assert(!(Complex() < Complex()));
@@ -110,7 +112,34 @@ int main() {
     assert(!(Complex(1, 2) < Complex(-1, -2)));
     assert(!(Complex(-1, -2) < Complex(1, 2)));
 
-    
+    assert(Complex::IsComplex("(5 + 6i)"));
+    assert(Complex::IsComplex("(-3.23 - 0.11i)"));
+    assert(!Complex::IsComplex("(112 + 4)"));
+    assert(!Complex::IsComplex(" (3 + 2i)"));
+    assert(Complex::IsComplex("(3+2i)"));
+    assert(!Complex::IsComplex("(3 + 2i) "));
+    assert(Complex::IsComplex("(5 -i)"));
+    assert(Complex::IsComplex("(5.2)"));
+    assert(Complex::IsComplex("(-23i)"));
+
+    // TODO(HD) Make sure these tests are supposed to be invalid
+    // assert(Complex::IsComplex("i"));
+    // assert(Complex::IsComplex("-i"));
+
+    stringstream si2("\t(4 - 3i)\n\t\n(4 + 3)\n\n\t\n");
+    assert(Complex::IsComplex(si2));
+    assert(Complex::IsComplex(si2));
+    assert(Complex::IsComplex(si2));
+    assert(Complex::IsComplex(si2));
+    assert(Complex::IsComplex(si2));
+    Complex b0;
+    si2 >> b0;
+    assert(b0 == Complex(4, -3));
+    assert(!Complex::IsComplex(si2));
+
+    // // Should fail:
+    // Complex b1;
+    // si2 >> b1;
 
     cout << "All tests passed" << endl;
 }

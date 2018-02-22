@@ -13,13 +13,22 @@
 // using abs
 // using round
 
+#include <cassert>
+// using assert
+
 #include <string>
 using std::string;
 using std::stof;
 
+#include <cctype>
+using std::isspace;
+
 #include <iostream>
 using std::istream;
 using std::ostream;
+using std::streampos;
+using std::ios_base;
+using std::ios;
 
 #include <sstream>
 using std::stringstream;
@@ -27,20 +36,39 @@ using std::stringstream;
 #include <regex>  // NOLINT(build/c++11)
 using std::regex;
 using std::regex_match;
-using std::match_results;
+using std::smatch;
+
+
+/**
+ * Regex detects open ( followed by signed int/float
+ *   then either a +/- followed by an unsigned int/float with i and end ),
+ *   just i and end ),
+ *   or just )
+ *
+ * Groups first int/float then operator and second int/float or the i if present.
+ *
+ * Does not account for floats that begin with decimal as in (.4223)
+ * Does not account for the implicit 1 when only imaginary part (i)
+ */
+const regex re = regex("\\( *([+-]?[0-9]+(?:\\.[0-9]*)?)"  // First number
+          "(?:"
+            " *([+-]) *((?:[0-9]+(?:\\.[0-9]+)?)?)i *\\)"  // +/- second num
+            "|(i) *\\)"  // i only
+            "|\\)"  // end parentheses only
+          ")");
 
 class Complex {
  public:
-    /*
-     * TODO: assert the correctness of the string representation of the Complex
-     * instance in str_complex when converting.
+    /**
+     * Converts a string to a Complex following rules of the regex re
+     * Returns the zero complex if invalid.
      */
-    // Converts a string to a Complex following rules of Complex::ToString
     static const Complex ToComplex(const string& val);  // NOLINT (rtime/references)
 
-    /*
-     * TODO: examine the contents of the parameters to make sure a valid
-     * representation of a Complex instance is stored.
+    /**
+     * Checks if the string contains a valid complex according to the regex re
+     * For string argument, the whole string must match
+     * For the istream argument, the complex may have leading whitespace
      */
     static bool IsComplex(const string& val);
     static bool IsComplex(istream& in_stream);
@@ -91,13 +119,15 @@ class Complex {
      */
     const string ToString() const;
 
+    // Addition of real and imaginary parts independantly
     friend const Complex operator+(double lhs, const Complex& rhs);
     friend const Complex operator+(int lhs, const Complex& rhs);
 
     friend const Complex operator*(double lhs, const Complex& rhs);
     friend const Complex operator*(int lhs, const Complex& rhs);
 
-    /* TODO: Implement the LT and operator< methods and functions */
+    // Less than compares the magnitudes of two complex numbers
+    // Note that int/double args are promoted to complex with zero imaginary
     bool LT(const Complex& rhs) const;
     bool LT(double rhs) const;
     bool LT(int rhs) const;
@@ -107,11 +137,11 @@ class Complex {
     friend bool operator<(double lhs, const Complex& rhs);
     friend bool operator<(int lhs, const Complex& rhs);
 
-    /* TODO: assert the correctness of the Complex string in lhs */
     /**
      * Overloads >> operator to extract from lhs a complex number and parse it
      * Characters are parsed from lhs until a pair of parentheses are found
      * Modifies rhs to contain the parsed number extracted from lhs
+     * Asserts that a valid number can be extracted
      * Returns the modified lhs after extraction
      */
     friend istream& operator>>(istream& lhs, Complex& rhs);
@@ -123,7 +153,11 @@ class Complex {
     // real and imaginary parts of the comlpex number, respectively
     double real_, imag_;
 
-    // regex re("\\( *([+-]?[0-9]+(?:\\.[0-9]*)?) *([+-]) *((?:[0-9]+(?:\\.[0-9]+)?)?)i *\\)");
+    // Extracts the next complex number from in_stream ignoreing leading wspace
+    // Detects complex number by presence of open and close parentheses only
+    // If the stream cannot provide open and close parentheses, an empty string
+    //   is returned
+    static const string ExtractComplex(istream& in_stream, const bool nochange);
 };
 
 #endif  // _HDAMRON_HW_2_COMPLEX_H_

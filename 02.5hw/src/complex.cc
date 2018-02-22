@@ -89,12 +89,15 @@ const Complex operator*(int lhs, const Complex& rhs) {
     return rhs.Mul(lhs);
 }
 
-// TODO(HD)
 bool Complex::LT(const Complex& rhs) const {
-  double this_magnitude  = sqrt(this->real_ * this->real_
-                              + this->imag_ * this->imag_);
-  double other_magnitude = sqrt(rhs.real_ * rhs.real_ + rhs.imag_ * rhs.imag_);
-  return this_magnitude < other_magnitude;
+    // Calculates magnitude of this complex using euclidean distance
+    double this_magnitude  = sqrt(this->real_ * this->real_
+                                + this->imag_ * this->imag_);
+    // Calculates magnitude of rhs complex using euclidean distance
+    double other_magnitude = sqrt(rhs.real_ * rhs.real_
+                                + rhs.imag_ * rhs.imag_);
+    // Compares magnitudes
+    return this_magnitude < other_magnitude;
 }
 
 bool Complex::LT(double rhs) const {
@@ -106,19 +109,19 @@ bool Complex::LT(int rhs) const {
 }
 
 bool Complex::operator<(const Complex& rhs) const {
-  return this->LT(rhs);
+    return this->LT(rhs);
 }
 
 bool Complex::operator<(double rhs) const {
-  return this->LT(rhs);
+    return this->LT(rhs);
 }
 
 bool Complex::operator<(int rhs) const {
-  return this->LT(rhs);
+    return this->LT(rhs);
 }
 
 bool operator<(double lhs, const Complex& rhs) {
-  return rhs.LT(lhs);
+    return rhs.LT(lhs);
 }
 
 bool operator<(int lhs, const Complex& rhs) {
@@ -163,77 +166,79 @@ const string Complex::ToString() const {
 }
 
 const Complex Complex::ToComplex(const string& val) {
-    if (val.size() <= 2 || val.front() != '(' || val.back() != ')')
-        return Complex();  // Invalid if it does not begin and end with ( and )
+    assert(Complex::IsComplex(val));
 
-    stringstream in(val);
-    stringstream num;
-    char tmp;
-    float real = 0, imag = 0;
+    smatch res;
+    bool matched = regex_match(val, res, re);
+    double real = 0, imag = 0;
 
-    in.get(tmp);            // Get first parenthesis
-    bool has_num = false,   // True when number has begun (for negative sign)
-         imag_neg = false,  // True iff imag_ should be negative
-         done = false;      // True when the conversion is done so loop exits
+    // Testing matched asserts that it is a valid complex
+    if (matched) {
+        // First element of match is the full match so start with 1 as real
+        real = stof(res[1]);
+        if (res[2] == "") {
+            // If there is only one match, it is just the real part
+        } else if (res[2] == "i") {
+            // If it has a second match, "i", it is only the imaginary par
+            imag = real;
+            real = 0;
+        } else {
+            // If there are 3 match groups, the second is the +/- and third
+            //   is the imaginary part (accounts for implicit 1)
+            if (res[3] == "")
+                imag = 1;
+            else
+                imag = stof(res[3]);
 
-    while (!done) {
-        in.get(tmp);
-
-        if (in.fail()) {
-            return Complex();  // Return 0 complex number if anything fails
-        }
-
-        switch (tmp) {
-            case '-':
-            case '+':
-                if (has_num) {
-                    // Negative is not first so it is the separator
-                    real = stof(num.str());  // Put number into real part
-                    num.str("");  // Clear sstream to start over for imag
-                    has_num = false;
-                    if (tmp == '-')
-                        imag_neg = true;
-                } else {
-                    // The negative is first in number so add it to the sstream
-                    num << tmp;
-                }
-                break;
-            case 'i':
-                // Immediately follows imaginary part and ends number
-                if (num.str() == "")
-                    imag = 1;  // 1 by default if none is specified
-                else
-                    imag = stof(num.str());  // Else convert to a number
-                if (imag_neg)
-                    imag = -imag;  // If we found a negative earlier, apply now
-                done = true;  // Because imaginary is second, number is done
-                break;
-            default:
-                if (tmp == ')' || in.eof()) {
-                    // End ) signals end of number
-                    // We should not run into eof before ) but just in case
-                    real = stof(num.str());  // Parse number into real
-                    done = true;
-                } else if (tmp == '.' || (tmp >= '0' && tmp <= '9')) {
-                    // 0-9 and . can be parts of a number, anything else ignored
-                    num << tmp;
-                    has_num = true;
-                }
+            if (res[2] == "-")
+                imag = -imag;
         }
     }
-
     return Complex(real, imag);
 }
 
-// TODO(HD)
-bool Complex::IsComplex(const string& in_string) {
-  // TODO(HD)
-  return false;
+const string Complex::ExtractComplex(istream& in_stream, const bool nochange) {
+    string comp_str;
+    char c = '\0';
+    bool past_wspace = false;
+    streampos start = in_stream.tellg();
+    ios::iostate start_state = in_stream.rdstate();
+    do {
+        if (nochange) {
+            // If nochange, peek at value and seek forward instead of getting
+            c = in_stream.peek();
+            in_stream.seekg(1, ios_base::cur);
+        } else {
+            // If allowed to change, get value
+            in_stream.get(c);
+        }
+        if (!past_wspace && !isspace(c))
+            past_wspace = true;
+        if (past_wspace)
+            comp_str += c;
+    } while (c != ')' && in_stream.good());
+
+    if (!in_stream.good()) {
+        comp_str = "";
+    }
+
+    if (nochange) {
+        // If nochange, set stream back to beginning position and clear failures
+        in_stream.seekg(start);
+        in_stream.setstate(start_state);
+    }
+
+    return comp_str;
+}
+
+bool Complex::IsComplex(const string& val) {
+    smatch res;
+    bool matched = regex_match(val, res, re);
+    return matched;
 }
 
 bool Complex::IsComplex(istream& in_stream) {
-  // TODO(HD)
-  return false;
+    return IsComplex(ExtractComplex(in_stream, true));
 }
 
 ostream& operator<<(ostream& lhs, const Complex rhs) {
@@ -242,29 +247,7 @@ ostream& operator<<(ostream& lhs, const Complex rhs) {
 }
 
 istream& operator>>(istream& lhs, Complex& rhs) {
-    stringstream complex_str;
-    char tmp = '\0';
-
-    while (tmp != '(' && lhs.good()) {
-        // Reads and discards until open ( is found
-        lhs.get(tmp);
-    }
-    complex_str << tmp;
-
-    while (tmp != ')' && lhs.good()) {
-        // Until close ) is found, add read characters to sstream for number
-        lhs.get(tmp);
-        complex_str << tmp;
-    }
-
-    if (lhs.good()) {
-        // If all goes well, we can parse the value via Complex::ToComplex
-        string rhs_str = complex_str.str();
-        rhs = Complex::ToComplex(rhs_str);
-    } else {
-        // If anything fails, just give back the empty Complex instance
-        rhs = Complex();
-    }
-
+    string comp = Complex::ExtractComplex(lhs, false);
+    rhs = Complex::ToComplex(comp);
     return lhs;
 }
