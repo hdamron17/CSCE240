@@ -52,10 +52,11 @@ using std::smatch;
  */
 const regex re = regex("\\( *([+-]?[0-9]+(?:\\.[0-9]*)?)"  // First number
           "(?:"
-            " *([+-]) *((?:[0-9]+(?:\\.[0-9]+)?)?)i *\\)"  // +/- second num
+            " *([+-]) *((?:[0-9]+(?:\\.[0-9]+)?)?) *i *\\)"  // +/- second num
             "|(i) *\\)"  // i only
             "|\\)"  // end parentheses only
           ")");
+// TODO(HD): Update to include leading decimal notation
 
 class Complex {
  public:
