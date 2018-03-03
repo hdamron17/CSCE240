@@ -45,18 +45,20 @@ using std::smatch;
  *   just i and end ),
  *   or just )
  *
- * Groups first int/float then operator and second int/float or the i if present.
+ * Groups first int/float then operator then second int/float with i
+ *   then i if there is no operator and second int/float)
  *
- * Does not account for floats that begin with decimal as in (.4223)
- * Does not account for the implicit 1 when only imaginary part (i)
+ * Note: Accounts for floats that begin with decimal as in (.4223)
+ * Note: Does not account for the implicit 1 when only imaginary part (i)
  */
-const regex re = regex("\\( *([+-]?[0-9]+(?:\\.[0-9]*)?)"  // First number
+const regex re = regex("\\( *([+-]?[0-9]*\\.?[0-9]+)"  // num1
           "(?:"
-            " *([+-]) *((?:[0-9]+(?:\\.[0-9]+)?)?) *i *\\)"  // +/- second num
+            " *([+-]) *((?:[0-9]*\\.?[0-9]+)?) *i *\\)"  // num2
             "|(i) *\\)"  // i only
             "|\\)"  // end parentheses only
           ")");
-// TODO(HD): Update to include leading decimal notation
+// TODO(HD) The decimal in floating point numbers should work but does not
+//       It has been tested in online regex testers and backed by online sources
 
 class Complex {
  public:

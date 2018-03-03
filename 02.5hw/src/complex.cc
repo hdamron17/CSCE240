@@ -121,11 +121,11 @@ bool Complex::operator<(int rhs) const {
 }
 
 bool operator<(double lhs, const Complex& rhs) {
-    return rhs.LT(lhs);
+    return Complex(lhs, 0).LT(rhs);
 }
 
 bool operator<(int lhs, const Complex& rhs) {
-    return rhs.LT(lhs);
+    return Complex(lhs, 0).LT(rhs);
 }
 
 const string Complex::ToString() const {
@@ -166,22 +166,22 @@ const string Complex::ToString() const {
 }
 
 const Complex Complex::ToComplex(const string& val) {
-    assert(Complex::IsComplex(val));
-
     smatch res;
     bool matched = regex_match(val, res, re);
+    assert(matched);
+
     double real = 0, imag = 0;
 
     // Testing matched asserts that it is a valid complex
     if (matched) {
         // First element of match is the full match so start with 1 as real
         real = stof(res[1]);
-        if (res[2] == "") {
-            // If there is only one match, it is just the real part
-        } else if (res[2] == "i") {
-            // If it has a second match, "i", it is only the imaginary par
+        if (res[4] == "i") {
+            // If it has i in the last place, it is only the imaginary part
             imag = real;
             real = 0;
+        } else if (res[2] == "") {
+            // If there is only one match, it is just the real part
         } else {
             // If there are 3 match groups, the second is the +/- and third
             //   is the imaginary part (accounts for implicit 1)

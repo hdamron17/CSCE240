@@ -111,20 +111,27 @@ int main() {
     assert(!(Complex(6, 5) < Complex(4, 6)));
     assert(!(Complex(1, 2) < Complex(-1, -2)));
     assert(!(Complex(-1, -2) < Complex(1, 2)));
+    assert(1.0 < Complex(43.0, 17.1));
+    assert(Complex(2.0, 1) < 5.123);
+    assert(33 < Complex(32, 32));
+    assert(Complex(2,3) < 5);
 
     assert(Complex::IsComplex("(5 + 6i)"));
     assert(Complex::IsComplex("(-3.23 - 0.11i)"));
     assert(!Complex::IsComplex("(112 + 4)"));
-    assert(!Complex::IsComplex(" (3 + 2i)"));
+    assert(!Complex::IsComplex(" (3.12 + 21.1i)"));
     assert(Complex::IsComplex("(3+2i)"));
     assert(!Complex::IsComplex("(3 + 2i) "));
     assert(Complex::IsComplex("(5 -i)"));
     assert(Complex::IsComplex("(5.2)"));
-    assert(Complex::IsComplex("(-23i)"));
+    assert(Complex::IsComplex("(-23.1i)"));
+    assert(Complex::IsComplex("(2i)"));
+    assert(Complex::ToComplex("(3i)") == Complex(0.0, 3.0));
+    assert(Complex::ToComplex("(2i)") == Complex(0.0, 2.0));
 
-    // TODO(HD) Make sure these tests are supposed to be invalid
-    // assert(Complex::IsComplex("i"));
-    // assert(Complex::IsComplex("-i"));
+    // Note: These values are supposed to be invalid contrary to common ideology
+    assert(!Complex::IsComplex("i"));
+    assert(!Complex::IsComplex("-i"));
 
     stringstream si2("\t(4 - 3i)\n\t\n(4 + 3)\n\n\t\n");
     assert(Complex::IsComplex(si2));
@@ -136,6 +143,26 @@ int main() {
     si2 >> b0;
     assert(b0 == Complex(4, -3));
     assert(!Complex::IsComplex(si2));
+
+    assert(Complex::IsComplex("0.1"));
+    assert(Complex::IsComplex("12.1 - 1.1i"));
+    assert(Complex::IsComplex("12.9i"));
+    assert(Complex::IsComplex("-1.1 + i"));
+
+    assert(Complex::ToComplex("0.1") == Complex(0.1, 0));
+    assert(Complex::ToComplex("12.1 - 1.1i") == Complex(12.1, -1.1));
+    assert(Complex::ToComplex("12.9i") == Complex(0, 12.9));
+    assert(Complex::ToComplex("-1.1 + i") == Complex(-1.1, 1));
+
+    // assert(Complex::IsComplex(".12"));
+    // assert(Complex::IsComplex(".001 + 7i"));
+    // assert(Complex::IsComplex(".1440i"));
+    // assert(Complex::IsComplex(".9 + .09i"));
+
+    // assert(Complex::ToComplex(".12") == Complex(.12, 0));
+    // assert(Complex::ToComplex(".001 + 7i") == Complex(.001, 7));
+    // assert(Complex::ToComplex(".1440i") == Complex(0, .1440));
+    // assert(Complex::ToComplex(".9 + .09i") == Complex(.9, .09));
 
     // // Should fail:
     // Complex b1;

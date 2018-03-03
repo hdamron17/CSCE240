@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.6)
 project (HW2.5)
 
 if(UNIX)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11 -g")
 endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY bin)
@@ -14,6 +14,11 @@ include_directories(include)
 
 add_executable(test_complex
   src/test_complex.cc
+  src/complex.cc
+)
+
+add_executable(jj_test_complex
+  src/jj_test_complex.cc
   src/complex.cc
 )
 
