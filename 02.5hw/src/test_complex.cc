@@ -18,9 +18,9 @@ using std::stringstream;
 #include "complex.h"  // NOLINT(build/include_subdir)
 
 const bool operator==(const Complex& lhs, const Complex& rhs) {
-    double epsilon = 0.0000001;
-    double real_err = fabs(lhs.real() - rhs.real());
-    double imag_err = fabs(lhs.imag() - rhs.imag());
+    double epsilon = 0.00001;
+    double real_err = abs(lhs.real() - rhs.real());
+    double imag_err = abs(lhs.imag() - rhs.imag());
     return real_err <= epsilon && imag_err <= epsilon;
 }
 
@@ -144,27 +144,22 @@ int main() {
     assert(b0 == Complex(4, -3));
     assert(!Complex::IsComplex(si2));
 
-    assert(Complex::IsComplex("0.1"));
-    assert(Complex::IsComplex("12.1 - 1.1i"));
-    assert(Complex::IsComplex("12.9i"));
-    assert(Complex::IsComplex("-1.1 + i"));
+    assert(Complex::IsComplex("(0.1)"));
+    assert(Complex::IsComplex("(12.1 - 1.1i)"));
+    assert(Complex::IsComplex("(12.9i)"));
+    assert(Complex::IsComplex("(-1.1 + i)"));
 
-    assert(Complex::ToComplex("0.1") == Complex(0.1, 0));
-    assert(Complex::ToComplex("12.1 - 1.1i") == Complex(12.1, -1.1));
-    assert(Complex::ToComplex("12.9i") == Complex(0, 12.9));
-    assert(Complex::ToComplex("-1.1 + i") == Complex(-1.1, 1));
+    assert(Complex::ToComplex("(0.1)") == Complex(0.1, 0));
+    assert(Complex::ToComplex("(12.1 - 1.1i)") == Complex(12.1, -1.1));
+    assert(Complex::ToComplex("(12.9i)") == Complex(0, 12.9));
+    assert(Complex::ToComplex("(-1.1 + i)") == Complex(-1.1, 1));
 
-    // assert(Complex::IsComplex(".12"));
-    // assert(Complex::IsComplex(".001 + 7i"));
-    // assert(Complex::IsComplex(".1440i"));
-    // assert(Complex::IsComplex(".9 + .09i"));
+    assert(Complex::ToComplex("(.12)") == Complex(.12, 0));
+    assert(Complex::ToComplex("(.001 + 7i)") == Complex(.001, 7));
+    assert(Complex::ToComplex("(.1440i)") == Complex(0, .1440));
+    assert(Complex::ToComplex("(.9 + .09i)") == Complex(.9, .09));
 
-    // assert(Complex::ToComplex(".12") == Complex(.12, 0));
-    // assert(Complex::ToComplex(".001 + 7i") == Complex(.001, 7));
-    // assert(Complex::ToComplex(".1440i") == Complex(0, .1440));
-    // assert(Complex::ToComplex(".9 + .09i") == Complex(.9, .09));
-
-    // // Should fail:
+    // Should fail:
     // Complex b1;
     // si2 >> b1;
 
