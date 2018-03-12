@@ -1,4 +1,4 @@
-#include "jj_test_complex.h"
+#include "jj_test_complex.h"  // NOLINT(build/include_subdir)
 /*******************************************************************************
 * Copyright (c) Judson James 02.28.2018
 * Made for Supplemental Instruction for CSCE 240, Spring 2018

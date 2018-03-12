@@ -114,7 +114,7 @@ int main() {
     assert(1.0 < Complex(43.0, 17.1));
     assert(Complex(2.0, 1) < 5.123);
     assert(33 < Complex(32, 32));
-    assert(Complex(2,3) < 5);
+    assert(Complex(2, 3) < 5);
 
     assert(Complex::IsComplex("(5 + 6i)"));
     assert(Complex::IsComplex("(-3.23 - 0.11i)"));
@@ -162,6 +162,8 @@ int main() {
     // Should fail:
     // Complex b1;
     // si2 >> b1;
+
+    assert(!Complex::IsComplex(""));
 
     cout << "All tests passed" << endl;
 }

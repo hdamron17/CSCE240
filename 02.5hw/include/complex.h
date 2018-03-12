@@ -9,9 +9,7 @@
 #define _HDAMRON_HW_2_COMPLEX_H_
 
 #include <cmath>
-// using fabs
-// using abs
-// using round
+using std::abs;
 
 #include <cassert>
 // using assert
