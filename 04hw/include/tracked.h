@@ -14,8 +14,9 @@ using csce240::two_dim::Point;
 using csce240::two_dim::Vector;
 
 #include "my_utils.h"  // NOLINT(build/include_subdir)
-using csce240::two_dim::CoordToPoint;
+using csce240::two_dim::CopyCoord;
 using csce240::two_dim::OffsetToVector;
+
 
 namespace csce240 {
 
@@ -24,7 +25,10 @@ class Tracked : public MobileRobot {
  public:
   // TODO(HD) add back const to Coordinate* pos
   explicit Tracked(Coordinate* pos, const double speed = 0.0)
-      : MobileRobot(speed) { location_ = CoordToPoint(pos); }  // Pose as Coord
+      : MobileRobot(speed) {
+          if (!location_) location_ = new Point();
+          CopyCoord(pos, location_);
+        }  // Pose as Coord
   Tracked(const double pos_x, const double pos_y, const double speed = 0.0)
       : MobileRobot(speed) { location_ = new Point(pos_x, pos_y); }  // From x,y
 //  virtual ~Tracked();

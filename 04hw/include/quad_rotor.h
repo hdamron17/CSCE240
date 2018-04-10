@@ -14,8 +14,8 @@ using csce240::three_dim::Point;
 using csce240::three_dim::Vector;
 
 #include "my_utils.h"  // NOLINT(build/include_subdir)
-using csce240::three_dim::CoordToPoint;
-using csce240::three_dim::OffsetToVector;
+using csce240::three_dim::CopyCoord;
+using csce240::two_dim::OffsetToVector;
 
 namespace csce240 {
 
@@ -24,9 +24,13 @@ class QuadRotor : public MobileRobot {
  public:
   // TODO(HD) add back const to Coordinate* pos
   explicit QuadRotor(Coordinate* pos, const double speed = 0.0)
-      : MobileRobot(speed) { location_ = CoordToPoint(pos); }  // Pose as Coord
-  QuadRotor(const double x, const double y, const double z, const double speed = 0.0)
-      : MobileRobot(speed) { location_ = new Point(x, y, z); }  // From x,y
+      : MobileRobot(speed) {
+          if (!location_) location_ = new Point();
+          CopyCoord(pos, location_);
+        }  // Pose as Coord
+  QuadRotor(const double x, const double y, const double z,
+        const double speed = 0.0)
+      : MobileRobot(speed) { location_ = new Point(x, y, z); }  // From x,y,z
 //  virtual ~QuadRotor();
 
   // Tests if distance to point <= speed (robot can go to point in 1 step)

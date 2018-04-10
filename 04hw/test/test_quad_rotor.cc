@@ -3,6 +3,8 @@
 #include <cstdlib>
 // using atoi
 #include <iostream>
+using std::cout;
+using std::endl;
 #include <string>
 
 #include "quad_rotor.h"  // NOLINT(build/include_subdir)
@@ -20,8 +22,6 @@ bool TestCreateQuadRotor() {
     return false;
   }
 
-  std::cout << "\t TestCreateQuadRotor BP 1" << std::endl;
-
   if (!r2.location()->Equals(&p)) {
     std::cout << "\t FAILED" << std::endl;
     std::cout << "\t Point expected: " << p << ", actual: " << r1.location()
@@ -29,10 +29,7 @@ bool TestCreateQuadRotor() {
     return false;
   }
 
-  std::cout << "\t TestCreateQuadRotor BP 2" << std::endl;
 //  Coordinate* loc = r1.location();
-  std::cout << "\t DEBUG: r1.location() = "
-        << r1.location() << " ; &p = " << &p << std::endl;
   return true;
 }
 
@@ -87,7 +84,7 @@ bool TestSetQuadRotorId() {
 bool TestQuadRotorCanTranslateTo() {
   std::cout << "\tTestQuadRotorCanTranslateTo" << std::endl;
   csce240::QuadRotor r(0.0, 0.0, 0.0, 5.0);
-  csce240::three_dim::Point p(3.0, 4.0, 1.0);
+  csce240::three_dim::Point p(3.0, 3.5, 1.0);
 
   if (!r.CanTranslateTo(&p)) {
     std::cout << "\t FAILED" << std::endl;
@@ -111,12 +108,61 @@ bool TestQuadRotorCanTranslateTo() {
   return true;
 }
 
+bool TestQuadRotorTranslate() {
+  std::cout << "\tTestQuadRotorTranslate" << std::endl;
+  csce240::QuadRotor r(0.0, 0.0, 0.0, 5.0);
+  csce240::three_dim::Point p(3.0, 3.2, 0.4);
+  const csce240::three_dim::Vector v(3.0, 3.2, 0.4), v1(1.1, 0.6, 2.2);
 
-int main(int argc, char* argv[]) {
-  assert(argc > 1 && "Expected integer argument");
+  if (!r.CanTranslateTo(&p)) {
+    std::cout << "\t FAILED" << std::endl;
+    std::cout << "\t Translate from " << *(r.location()) << ", to " << p
+        << " with speed " << r.speed()
+        << " Expected: 1, Actual: " << r.CanTranslateTo(&p)
+        << std::endl;
+    return false;
+  } else {
+    r.Translate(&v);
+  }
+
+  if (!r.location()->Equals(&p)) {
+    std::cout << "\t FAILED" << std::endl;
+    std::cout << "\t Translate to " << *(r.location())
+        << " with speed " << r.speed()
+        << " Expected: " << p << ", Actual: " << r.location()
+        << std::endl;
+    return false;
+  }
+
+  p = csce240::three_dim::Point(4.1, 3.8, 2.6);
+
+  if (!r.CanTranslateTo(&p)) {
+    std::cout << "\t FAILED" << std::endl;
+    std::cout << "\t Translate from " << *(r.location()) << ", to " << p
+        << " with speed " << r.speed()
+        << " Expected: 1, Actual: " << r.CanTranslateTo(&p)
+        << std::endl;
+    return false;
+  } else {
+    r.Translate(&v1);
+  }
+
+  if (!r.location()->Equals(&p)) {
+    std::cout << "\t FAILED" << std::endl;
+    std::cout << "\t Translate to " << *(r.location())
+        << " with speed " << r.speed()
+        << " Expected: " << p << ", Actual: " << r.location()
+        << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
+int main_(int i) {
   std::cout << "TESTING csce240::QuadRotor CLASS" << std::endl;
 
-  switch (atoi(argv[1])) {
+  switch (i) {
   case 0:
     if (TestCreateQuadRotor()) {
       std::cout << "\t PASSED" << std::endl;
@@ -145,9 +191,28 @@ int main(int argc, char* argv[]) {
     } else {
       return 1;
     }
+  case 4:
+    if (TestQuadRotorTranslate()) {
+      std::cout << "\t PASSED" << std::endl;
+      return 0;
+    } else {
+      return 1;
+    }
   default:
-    assert(false && "Only args 0, 1, 2 allowed.");
+     assert(false && "Only args 0, 1, 2, 3 allowed.");
   }
 
   return 0;
+}
+
+int main(int argc, char* argv[]) {
+  if (argc <= 1) {
+    bool res = 0;
+    for (int i = 0; i <= 4; ++i) {
+      res |= main_(i);
+    }
+    return res;
+  } else {
+    main_(atoi(argv[1]));
+  }
 }

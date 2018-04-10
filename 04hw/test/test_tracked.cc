@@ -3,20 +3,20 @@
 #include <cstdlib>
 // using atoi
 #include <iostream>
+using std::cout;
+using std::endl;
 #include <string>
 
 #include "tracked.h"  // NOLINT(build/include_subdir)
 #include "point.h"  // NOLINT(build/include_subdir)
+#include "my_utils.h"  // NOLINT(build/include_subdir)
 
 bool TestCreateTracked() {
   std::cout << "\tTestCreateTracked" << std::endl;
   csce240::two_dim::Point p(0.0, 0.0);
-  std::cout << "T:BP 1" << std::endl;
   csce240::Tracked r1(&p), r2(0.0, 0.0, 3.14159);
-  std::cout << "T:BP 2" << std::endl;
 
   const csce240::Coordinate* c = r1.location();
-  std::cout << "T:BP 3 @ " << c << " vs " << &p << std::endl;
   if (!c->Equals(&p)) {
     std::cout << "\t FAILED" << std::endl;
     std::cout << "\t Point expected: " << p << ", actual: " << r1.location()
@@ -24,19 +24,13 @@ bool TestCreateTracked() {
     return false;
   }
 
-  std::cout << "\t TestCreateTracked BP 1" << std::endl;
-
   if (!r2.location()->Equals(&p)) {
     std::cout << "\t FAILED" << std::endl;
     std::cout << "\t Point expected: " << p << ", actual: " << r1.location()
         << std::endl;
     return false;
   }
-
-  std::cout << "\t TestCreateTracked BP 2" << std::endl;
 //  Coordinate* loc = r1.location();
-  std::cout << "\t DEBUG: r1.location() = "
-        << r1.location() << " ; &p = " << &p << std::endl;
   return true;
 }
 
@@ -95,7 +89,7 @@ bool TestTrackedCanTranslateTo() {
 
   if (!r.CanTranslateTo(&p)) {
     std::cout << "\t FAILED" << std::endl;
-    std::cout << "\t Translate from " << r.location() << ", to " << p
+    std::cout << "\t Translate from " << *(r.location()) << ", to " << p
         << " with speed " << r.speed()
         << " Expected: 1, Actual: " << r.CanTranslateTo(&p)
         << std::endl;
@@ -105,7 +99,7 @@ bool TestTrackedCanTranslateTo() {
   p = csce240::two_dim::Point(3.1, 4.1);
   if (r.CanTranslateTo(&p)) {
     std::cout << "\t FAILED" << std::endl;
-    std::cout << "\t Translate from " << r.location() << ", to " << p
+    std::cout << "\t Translate from " << *(r.location()) << ", to " << p
         << " with speed " << r.speed()
         << " Expected: 1, Actual: " << r.CanTranslateTo(&p)
         << std::endl;
@@ -115,12 +109,61 @@ bool TestTrackedCanTranslateTo() {
   return true;
 }
 
+bool TestTrackedTranslate() {
+  std::cout << "\tTestTrackedTranslate" << std::endl;
+  csce240::Tracked r(0.0, 0.0, 5.0);
+  csce240::two_dim::Point p(3.0, 4.0);
+  const csce240::two_dim::Vector v(3.0, 4.0), v1(0.1, 0.1);
 
-int main(int argc, char* argv[]) {
-  assert(argc > 1 && "Expected integer argument");
+  if (!r.CanTranslateTo(&p)) {
+    std::cout << "\t FAILED" << std::endl;
+    std::cout << "\t Translate from " << *(r.location()) << ", to " << p
+        << " with speed " << r.speed()
+        << " Expected: 1, Actual: " << r.CanTranslateTo(&p)
+        << std::endl;
+    return false;
+  } else {
+    r.Translate(&v);
+  }
+
+  if (!r.location()->Equals(&p)) {
+    std::cout << "\t FAILED" << std::endl;
+    std::cout << "\t Translate to " << *(r.location())
+        << " with speed " << r.speed()
+        << " Expected: " << p << ", Actual: " << r.location()
+        << std::endl;
+    return false;
+  }
+
+  p = csce240::two_dim::Point(3.1, 4.1);
+
+  if (!r.CanTranslateTo(&p)) {
+    std::cout << "\t FAILED" << std::endl;
+    std::cout << "\t Translate from " << *(r.location()) << ", to " << p
+        << " with speed " << r.speed()
+        << " Expected: 1, Actual: " << r.CanTranslateTo(&p)
+        << std::endl;
+    return false;
+  } else {
+    r.Translate(&v1);
+  }
+
+  if (!r.location()->Equals(&p)) {
+    std::cout << "\t FAILED" << std::endl;
+    std::cout << "\t Translate to " << *(r.location())
+        << " with speed " << r.speed()
+        << " Expected: " << p << ", Actual: " << r.location()
+        << std::endl;
+    return false;
+  }
+
+  return true;
+}
+
+int main_(int i) {
   std::cout << "TESTING csce240::Tracked CLASS" << std::endl;
 
-  switch (atoi(argv[1])) {
+  switch (i) {
   case 0:
     if (TestCreateTracked()) {
       std::cout << "\t PASSED" << std::endl;
@@ -149,9 +192,28 @@ int main(int argc, char* argv[]) {
     } else {
       return 1;
     }
+  case 4:
+    if (TestTrackedTranslate()) {
+      std::cout << "\t PASSED" << std::endl;
+      return 0;
+    } else {
+      return 1;
+    }
   default:
-    assert(false && "Only args 0, 1, 2 allowed.");
+    assert(false && "Only args 0, 1, 2, 3 allowed.");
   }
 
   return 0;
+}
+
+int main(int argc, char* argv[]) {
+  if (argc <= 1) {
+    bool res = 0;
+    for (int i = 0; i <= 4; ++i) {
+      res |= main_(i);
+    }
+    return res;
+  } else {
+    main_(atoi(argv[1]));
+  }
 }

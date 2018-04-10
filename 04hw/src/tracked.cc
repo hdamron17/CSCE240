@@ -13,22 +13,20 @@ bool Tracked::CanTranslateTo(const Coordinate* dest) const {
   Offset* path = new Vector();
   location_->GetOffset(dest, path);
 
-  Vector* path2d = OffsetToVector(path);
+  const Vector* path2d = OffsetToVector(path);
 
   // Compares length to speed and returns true if it is smaller
   bool comp = path->GetLength() <= speed_
       && path->GetLength() == path2d->GetLength();
   if (path) delete path;
-  if (path2d) delete path2d;
   return comp;
 }
 
 void Tracked::Translate(const Offset* direction) {
-  Vector* v = OffsetToVector(direction);
+  const Vector* v = OffsetToVector(direction);
   if (v->GetLength() <= speed_) {
     location_->AddOffset(v);
   }
-  if (v) delete v;
 }
 
 }  // namespace csce240

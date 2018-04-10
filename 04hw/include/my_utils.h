@@ -12,13 +12,19 @@
 namespace csce240 {
 
 namespace two_dim {
-  Point* CoordToPoint(const Coordinate* in);
-  Vector* OffsetToVector(const Offset* in);
+  const Point* CoordToPoint(const Coordinate* in);
+  const Vector* OffsetToVector(const Offset* in);
+
+  void CopyCoord(const Coordinate* in, Coordinate* out);
+  void CopyVector(const Offset* in, Offset* out);
 }  // namespace two_dim
 
 namespace three_dim {
-  Point* CoordToPoint(const Coordinate* in);
-  Vector* OffsetToVector(const Offset* in);
+  const Point* CoordToPoint(const Coordinate* in);
+  const Vector* OffsetToVector(const Offset* in);
+
+  void CopyCoord(const Coordinate* in, Coordinate* out);
+  void CopyVector(const Offset* in, Offset* out);
 }  // namespace three_dim
 
 }  // namespace csce240

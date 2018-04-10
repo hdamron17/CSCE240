@@ -16,7 +16,8 @@ MobileRobot::MobileRobot(double speed) {
 
 MobileRobot::~MobileRobot() {
   RemoveId(id_);
-  delete location_;
+  if (location_)
+    delete location_;
 }
 
 double MobileRobot::speed() const {
@@ -38,7 +39,6 @@ bool MobileRobot::id(const string& id) {
 }
 
 const Coordinate* MobileRobot::location() const {
-  std::cout << "BP M:1 @ " << location_ << std::endl;
   return location_;  // TODO(HD) find copy constructor so not exposed
 }
 

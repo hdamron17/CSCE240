@@ -45,7 +45,7 @@ class MobileRobot {
  protected:
   std::string id_;
   double speed_;
-  Coordinate *location_;
+  Coordinate *location_ = nullptr;
 
  private:
   static int id_gen_;  // Static incrementor for generating new ids
