@@ -24,6 +24,12 @@ bool TestCreateTracked() {
     return false;
   }
 
+  /*
+  // This code cause seg faults because MobileRobot::location() does not copy
+  delete c;
+  std::cout << r1.location() << std::endl;
+  */
+
   if (!r2.location()->Equals(&p)) {
     std::cout << "\t FAILED" << std::endl;
     std::cout << "\t Point expected: " << p << ", actual: " << r1.location()
