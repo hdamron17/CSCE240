@@ -67,4 +67,3 @@ bool TestAverageTempDisplay(const std::vector<Reading>& readings,
     return false;
   }
 }
-

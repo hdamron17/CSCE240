@@ -1,10 +1,12 @@
-#ifndef _06HW_INCLUDE_DISPLAY_H_
+/* Copyright 2018 */
+/* Slightly modified by Hunter Damron */
+#ifndef _06HW_INCLUDE_DISPLAY_H_  // NOLINT(build/header_guard)
 #define _06HW_INCLUDE_DISPLAY_H_
 
 #include <ostream>
 
-#include "observer.h"
-#include "weather_station.h"
+#include "observer.h"  // NOLINT(build/include_subdir)
+#include "weather_station.h"  // NOLINT(build/include_subdir)
 
 namespace csce240 {
 
@@ -36,4 +38,4 @@ std::ostream& operator<<(std::ostream& cout, const Display& rhs);
 
 }  // namespace csce240
 
-#endif
+#endif  // 06HW_M1_INCLUDE_DISPLAY_H_
