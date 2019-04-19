@@ -1,0 +1,84 @@
+CC = g++  # use g++ compiler
+
+FLAGS = -std=c++11  # compile with C++ 11 standard
+FLAGS += -Wall      # compile with all warnings
+
+INCLUDE = include
+SOURCE = src
+BINARY = bin
+BUILD = build
+TEST = test
+LIBRARY = lib
+
+LINK = $(CC) $(FLAGS) -o  # final linked build to binary executable
+
+I = -I $(INCLUDE) -I $(LIBRARY)/$(INCLUDE)  #  Paths which should be included
+                                            #  into search path for #include
+                                            #  preprocessor macro.
+COMPILE = $(CC) $(FLAGS) $(I) -c  # compilation to intermediary .o files
+
+test_observer_pattern : $(BUILD)/test_observer_pattern.o \
+                        $(BUILD)/average_temp_display.o \
+                        $(BUILD)/temp_display.o $(BUILD)/display.o \
+                        $(BUILD)/weather_station.o $(BUILD)/observable.o
+	$(LINK) $(BINARY)/$@ $^ $(LIBRARY)/$(BUILD)/sensor_net.o
+
+test_displays : $(BUILD)/test_displays.o \
+                $(BUILD)/average_temp_display.o $(BUILD)/display.o \
+                $(BUILD)/weather_station.o
+	$(LINK) $(BINARY)/$@ $^ $(LIBRARY)/$(BUILD)/sensor_net.o
+
+test_weather_station : $(BUILD)/test_weather_station.o \
+                       $(BUILD)/weather_station.o \
+                       $(BUILD)/observable.o
+	$(LINK) $(BINARY)/$@ $^ $(LIBRARY)/$(BUILD)/sensor_net.o
+
+library :
+	make -C $(LIBRARY) library
+
+$(BUILD)/test_observer_pattern.o : $(TEST)/test_observer_pattern.cc \
+                                  $(BUILD)/average_temp_display.o \
+                                  $(BUILD)/temp_display.o \
+                                  $(BUILD)/weather_station.o
+	$(COMPILE) $< -o $@
+
+
+$(BUILD)/test_weather_station.o : $(TEST)/test_weather_station.cc \
+                                  $(BUILD)/weather_station.o \
+                                  $(BUILD)/observable.o
+	$(COMPILE) $< -o $@
+
+$(BUILD)/test_displays.o : $(TEST)/test_displays.cc \
+                           $(BUILD)/average_temp_display.o $(BUILD)/display.o 
+	$(COMPILE) $< -o $@
+
+# AverageTempDisplay instances are Displays
+$(BUILD)/temp_display.o : $(SOURCE)/temp_display.cc \
+                          $(INCLUDE)/temp_display.h \
+                          $(BUILD)/display.o
+	$(COMPILE) $< -o $@
+
+$(BUILD)/average_temp_display.o : $(SOURCE)/average_temp_display.cc \
+                                  $(INCLUDE)/average_temp_display.h \
+                                  $(BUILD)/display.o
+	$(COMPILE) $< -o $@
+
+# Display instances are Observers
+$(BUILD)/display.o : $(SOURCE)/display.cc $(INCLUDE)/display.h \
+                     $(INCLUDE)/observer.h \
+                     $(BUILD)/weather_station.o
+	$(COMPILE) $< -o $@
+
+# WeatherStation instances are Observables
+$(BUILD)/weather_station.o : $(SOURCE)/weather_station.cc \
+                             $(INCLUDE)/weather_station.h \
+                             $(BUILD)/observable.o
+	$(COMPILE) $< -o $@
+
+# Observable instances are coupled to Observers
+$(BUILD)/observable.o : $(SOURCE)/observable.cc $(INCLUDE)/observable.h \
+                        $(INCLUDE)/observer.h
+	$(COMPILE) $< -o $@
+
+clean:
+	rm $(BUILD)/* $(LIBRARY)/$(BUILD)/*
